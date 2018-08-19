@@ -5,6 +5,9 @@ var bcrypt = require('bcrypt-nodejs');
 //models
 var User = require('../models/user');
 
+// servicios jwt
+var jwt = require('../services/jwt');
+
 //actions
 function pruebas(req, res) {
     res.status(200).send({
@@ -30,7 +33,6 @@ function saveUser(req, res) {
         user.image = null;
 
         // comprobamos que el email no exista
-
         User.findOne({
             email: user.email.toLowerCase()
         }, (err, issetUser) => {
@@ -64,28 +66,62 @@ function saveUser(req, res) {
                         })
 
                     });
-                }else{
+                } else {
                     res.status(500).send({
                         message: 'El usuaio no se puede registrar porque ya existe'
                     });
                 }
             }
         })
-
-
-
     } else {
-
         res.status(500).send({
             message: 'Introduce los datos correctamente para poder registrar al usuario'
         });
     }
+}
+
+function login (req, res){
+    var params = req.body;
+    var email = params.email;
+    var password = params.password;
+
+    User.findOne({email: email.toLowerCase()}, (err, user) => {
+        if(err){
+            res.status(500).send({
+                message: 'Error al comprobar el Usuario'
+            });
+        }else{
+            if(user){
+                bcrypt.compare(password, user.password, (err, check) =>{
+                    if(check){
+                        if (params.gettoken){
+                            res.status(200).send({
+                                token: jwt.createToken(user)
+                            });
+                        }else{
+                            res.status(200).send({user});
+                        }
 
 
+                    }else{
+                        res.status(404).send({
+                            message: 'El Usuario no no ha podido loguearse o contraseña incorrecta'
+                        });
+                    }
+                });
+
+            }else{
+                res.status(500).send({
+                    message: 'El Usuario no no ha podido loguearse'
+                });
+            }
+        }
+    });
 }
 
 // exports
 module.exports = {
     pruebas,
-    saveUser
+    saveUser,
+    login
 };
