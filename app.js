@@ -6,6 +6,7 @@ var bodyParser = require ('body-parser');
 var app = express ();
 
 // cargar rutas
+var user_routes = require('./routes/user');
 
 // midelWare de Body-parse
 
@@ -16,11 +17,10 @@ app.use(bodyParser.json());
 // configurar cabeceras y cors
 
 
-// rutas body-parser
+// rutas base
+app.use ('/api', user_routes);
 
-app.get('/probando', (req, res) =>{
-    res.status(200).send({message: 'este es el metodo probando'});
-});
+
 
 // exportar modulo
 
