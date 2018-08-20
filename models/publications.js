@@ -4,6 +4,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PropSchema = Schema({
+    province: String,
+    city: String,
+    sector: String,
     typeProp: String,
     transaction: String,
     title: String,
@@ -14,13 +17,18 @@ var PropSchema = Schema({
     room: Number,
     bath: Number,
     park: Number,
+    meters: Number,
     antiquity: String,
-    phone: String,
     security: String,
     pet: String,
     description: String,
-    mapp: String,
-    user: { type: Schema.ObjectId, ref: 'User' }
+    googleMaps: String,
+    user: { type: Schema.ObjectId, ref: 'User' },
+    phone: Number,
+    userName: String,
+    surnameUser: String,
+    contactUser: String,
+    emailUser: String
 });
 
-module.exports = mongoose.model('Publications', PropSchema);
+module.exports = mongoose.model('Publication', PropSchema);

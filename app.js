@@ -7,6 +7,7 @@ var app = express ();
 
 // cargar rutas
 var user_routes = require('./routes/user');
+var publications_routes = require('./routes/publications');
 
 // midelWare de Body-parse
 
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 
 // rutas base
 app.use ('/api', user_routes);
+app.use ('/api', publications_routes);
 
 
 
