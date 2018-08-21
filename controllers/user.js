@@ -224,9 +224,6 @@ function getImageFile(req, res){
             });
         }
     });
-
-
-
 }
 // exports
 module.exports = {
