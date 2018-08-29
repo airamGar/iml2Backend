@@ -83,6 +83,7 @@ function saveUser(req, res) {
     }
 }
 
+
 function login(req, res) {
     var params = req.body;
     var email = params.email;
@@ -124,14 +125,61 @@ function login(req, res) {
     });
 }
 
+function getUser(req, res) {
+    var userId = req.params.id;
+
+    User.findById(userId).populate({
+        path: 'user'
+    }).exec((err, user) => {
+        if (err) {
+            res.status(500).send({
+                message: 'error en la peticion del usuario'
+            });
+        } else {
+            if (!user) {
+                res.status(404).send({
+                    message: 'La publicacion no Existe'
+                });
+            } else {
+                res.status(200).send({
+                    user
+                });
+            }
+        }
+    });
+}
+
+function getUser2(req, res) {
+    var userId = req.params.id;
+    //buscar un documento por un  id
+    User.findById(userId, (err, user) => {
+        if (err) return res.status(500).send({
+            message: 'Error en la petición'
+        });
+        if (!user) return res.status(404).send({
+            message: 'EL usuario no existe'
+        });
+        followThisUser(req.user.sub, userId).then((value) => {
+            user.password = undefined;
+            return res.status(200).send({
+                user,
+                following: value.following,
+                followed: value.followed
+            });
+        });
+
+    });
+}
+
 function updateUser(req, res) {
     var userId = req.params.id;
     var update = req.body;
-    if (userId != req.user.sub) {
-        return res.status(500).send({
-            message: 'No tienes permiso para actualizar el usuario'
-        });
-    }
+    delete update.password;
+    // if (userId != req.user.sub) {
+    //     return res.status(500).send({
+    //         message: 'No tienes permiso para actualizar el usuario'
+    //     });
+    // }
     User.findByIdAndUpdate(userId, update, {
         new: true
     }, (err, userUpdate) => {
@@ -152,6 +200,7 @@ function updateUser(req, res) {
         }
     });
 }
+
 
 function uploadImage(req, res) {
     var userId = req.params.id;
@@ -211,14 +260,14 @@ function uploadImage(req, res) {
     }
 }
 
-function getImageFile(req, res){
+function getImageFile(req, res) {
     var imageFile = req.params.imageFile;
     var path_file = './uploads/users/' + imageFile;
 
     fs.exists(path_file, function (exists) {
         if (exists) {
             res.sendFile(path.resolve(path_file));
-        }else{
+        } else {
             return res.status(404).send({
                 message: 'La Imagen no existe'
             });
@@ -232,5 +281,7 @@ module.exports = {
     login,
     updateUser,
     uploadImage,
-    getImageFile
+    getImageFile,
+    getUser,
+    getUser2
 }

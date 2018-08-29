@@ -40,11 +40,12 @@ function savePublications(req, res) {
         publications.meters = params.meters;
         publications.antiquity = params.antiquity;
         publications.security = params.security;
+        publications.phone = params.phone;
         publications.pet = params.pet;
         publications.description = params.description;
         publications.googleMaps = params.googleMaps;
         publications.user = req.user.sub;
-        publications.phone = req.user.phone;
+        publications.phoneUser = req.user.phone;
         publications.userName = req.user.name;
         publications.surnameUser = req.user.surname;
         publications.emailUser = req.user.email;
